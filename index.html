@@ -143,11 +143,12 @@
 
      /* Sayaç için stil */
      #playCounter {
-        margin-top: 15px; /* Butonlarla arasında boşluk */
+        margin-top: 15px; 
         margin-bottom: 10px;
-        font-size: clamp(14px, 3.5vw, 16px); /* Biraz daha küçük olabilir */
-        color: #00cc00; /* Biraz daha soluk yeşil */
+        font-size: clamp(14px, 3.5vw, 16px); 
+        color: #00cc00; 
         min-height: 20px; /* İçerik yüklenirken yer kaplasın */
+        display: none; /* Başlangıçta gizli, JS ile görünür yapılacak */
      }
 
      @media (min-width: 768px) {
@@ -184,8 +185,7 @@
         } catch (e) {
             console.error("OG:URL ayarlama hatası:", e);
         }
-        // Sayfa yüklendiğinde oyun sayısını göster ve sayacı doğru yere taşı
-        fetchAndShowPlayCount(true); // true parametresi ilk yükleme olduğunu belirtir
+        fetchAndShowPlayCount(true); 
     });
 
     // --- Oyun Karakterleri ---
@@ -210,7 +210,7 @@
     const resultEl = document.getElementById('result');
     const playButtonEl = document.getElementById('playButton');
     const shareBtn = document.getElementById('shareBtn');
-    const playCounterEl = document.getElementById('playCounter'); // Sayaç div'i
+    const playCounterEl = document.getElementById('playCounter'); 
 
     // --- Ses Dosyaları ---
     let clickSound, revealSound, scrollSound;
@@ -236,13 +236,11 @@
     function positionCounter(afterPlayButton) {
         if (playCounterEl && playButtonEl && shareBtn) {
             if (afterPlayButton) {
-                // Sayaç OYNA butonundan sonra, PAYLAŞ butonundan önce
                 playButtonEl.after(playCounterEl);
             } else {
-                // Sayaç PAYLAŞ butonundan sonra
                 shareBtn.after(playCounterEl);
             }
-            playCounterEl.style.display = 'block'; // Görünür yap
+            playCounterEl.style.display = 'block'; 
         }
     }
 
@@ -250,13 +248,13 @@
       try {
         const response = await fetch('/api/getPlayCount');
         if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.statusText}`);
+          throw new Error(`Okunma sayısı alınamadı: ${response.statusText}`);
         }
         const data = await response.json();
         if (playCounterEl) {
           playCounterEl.textContent = `Bu oyun ${data.count} kez oynandı.`;
           if (isInitialLoad) {
-            positionCounter(true); // Başlangıçta OYNA'nın altına koy
+            positionCounter(true); 
           }
         }
       } catch (error) {
@@ -264,7 +262,7 @@
         if (playCounterEl) {
           playCounterEl.textContent = 'Oynanma sayısı yüklenemedi.';
           if (isInitialLoad) {
-            positionCounter(true); // Başlangıçta OYNA'nın altına koy (hata olsa bile)
+            positionCounter(true); 
           }
         }
       }
@@ -274,27 +272,34 @@
       try {
         const response = await fetch('/api/incrementPlayCount', { method: 'POST' });
         if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.statusText}`);
+          throw new Error(`Sayaç arttırılamadı: ${response.statusText}`);
         }
         const data = await response.json();
         if (playCounterEl) {
           playCounterEl.textContent = `Bu oyun ${data.count} kez oynandı.`;
         }
-        return data.count;
+        return data.count; 
       } catch (error) {
         console.error('Sayaç artırma hatası:', error);
-        // Hata durumunda bir önceki sayacı tekrar göstermeyi deneyebiliriz
-        // await fetchAndShowPlayCount(); // Veya sadece hata mesajı bırak
         return null;
       }
     }
 
-    // --- Ana Oyun Fonksiyonu ---
-    async function playGame() { // Fonksiyonu async yaptık
+    // --- Ana Oyun Fonksiyonu (İyileştirilmiş) ---
+    async function playGame() { 
       clickSound.play().catch(e => console.warn("Click sesi çalınamadı:", e));
 
-      await incrementAndShowPlayCount(); // Önce sayacı artır ve göster (yeni konumu etkilemez)
-      positionCounter(true); // Oyun başlarken sayacı OYNA'nın altına (veya TEKRAR OYNA'nın) taşı
+      // Sayaç artırma isteğini arka planda gönder, sonucunu BEKLEME.
+      incrementAndShowPlayCount().then(newCount => {
+        if (newCount !== null) {
+          // Başarılı artış, sayaç metni zaten incrementAndShowPlayCount içinde güncellendi.
+          console.log("Sayaç başarıyla arttırıldı, yeni değer:", newCount);
+        } else {
+          // Sayaç artırma başarısız oldu, hata zaten konsola loglandı.
+        }
+      });
+      
+      positionCounter(true); // Oyun başlarken sayacı OYNA'nın altına taşı
 
       shareBtn.classList.remove('visible'); 
       resultEl.classList.remove('revealed'); 
