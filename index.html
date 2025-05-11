@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta property="og:title" content="Paralel Evrende Hangi Hukuk Karakterisin?">
+  <meta property="og:description" content="Hukuk karakterlerinden hangisi olduğunu keşfetmek için bu eğlenceli testi çöz ve sonucunu paylaş!">
+  <meta property="og:image" content="https://via.placeholder.com/1200x630/000000/00FF00?text=Paralel+Evren+Hukuk+Oyunu">
+  <meta property="og:url" content=""> 
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <title>Paralel Evrende Hangi Hukuk Karakterisin?</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      background-color: black;
+      color: #00ff00;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      min-height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+    h1 { 
+      font-size: clamp(26px, 6vw, 40px); 
+      font-weight: normal;
+      color: #00dd00; 
+      text-transform: uppercase;
+      letter-spacing: 0.08em; /* Güncellendi */
+      width: 90%;
+      /* max-width: 550px; Kaldırıldı */
+      margin-top: 20px; 
+      margin-bottom: 25px; 
+      line-height: 1.3;
+    }
+    .separator { 
+        width: 70%;
+        max-width: 350px;
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(0,255,0,0.35), transparent);
+        margin: 20px 0;
+    }
+    #result {
+      font-size: clamp(32px, 8vw, 50px); 
+      min-height: 50px; 
+      margin-top: 15px; 
+      margin-bottom: 15px; 
+      font-weight: bold;
+      color: #39FF14;
+      opacity: 0; 
+      padding: 10px; 
+      transition: box-shadow 0.3s ease-out; 
+    }
+    #result.flickering { 
+      opacity: 1; 
+      animation: flickerAnimation 0.2s infinite;
+      box-shadow: none; 
+    }
+    #result.revealed { 
+        animation: revealResultAnimation 0.6s ease-out forwards;
+        box-shadow: 0 0 20px rgba(57, 255, 20, 0.25), 
+                      0 0 8px rgba(57, 255, 20, 0.2) inset;
+    }
+    @keyframes flickerAnimation {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    @keyframes revealResultAnimation { 
+      0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    button {
+      background-color: #000;
+      color: #0f0;
+      border: 2px solid #0f0;
+      padding: 12px 24px;
+      font-size: clamp(16px, 5vw, 20px); 
+      cursor: pointer;
+      margin: 8px; 
+      border-radius: 6px; 
+      width: 90%;
+      max-width: 300px;
+      transition: background-color 0.2s, color 0.2s, transform 0.1s, box-shadow 0.2s;
+    }
+    button:hover:not(:disabled) { 
+      background-color: #0f0;
+      color: #000;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.6); 
+    }
+    button:active:not(:disabled) {
+        transform: scale(0.97); 
+    }
+    button:disabled {
+        border-color: #077007;
+        color: #077007;
+        cursor: not-allowed;
+        opacity: 0.6; 
+    }
+    #shareBtn { 
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+    }
+    #shareBtn.visible { 
+        opacity: 1;
+        visibility: visible;
+    }
+    .footer-info {
+        margin-top: 40px; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px; 
+    }
+    .creator-credit {
+        font-size: clamp(12px, 3.2vw, 14px); 
+        color: rgba(0, 255, 0, 0.75);
+        line-height: 1.5; 
+    }
+    .creator-credit .creator-name {
+        color: #00ff00; 
+        text-decoration: none; 
+        font-weight: bold;
+    }
+    .creator-credit .creator-name:hover {
+        color: #39FF14;
+        text-decoration: underline;
+    }
+
+    @media (min-width: 768px) {
+      h1 { font-size: 40px; letter-spacing: 0.1em;} /* letter-spacing burada biraz daha fazla olabilir */
+      #result { font-size: 50px; } 
+      button { font-size: 20px; padding: 12px 32px; } 
+      .creator-credit { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Paralel Evrende<br>Hangi Hukuk Karakterisin?</h1>
+  <hr class="separator"> 
+  <div id="result">?</div>
+  <hr class="separator"> 
+  
+  <button id="playButton" onclick="playGame()">OYNA</button>
+  <button id="shareBtn" onclick="shareResult()">Sonucu X'te Paylaş</button> 
+
+  <div class="footer-info">
+    <p class="creator-credit">Bu bir <a href="https://twitter.com/lawmentalitty" target="_blank" class="creator-name">Yusuf</a> yapımıdır. <br>Görüşlerinizi X üzerinden iletebilirsiniz.</p>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        try {
+            const ogUrlMeta = document.querySelector('meta[property="og:url"]');
+            if (ogUrlMeta) {
+                ogUrlMeta.setAttribute('content', window.location.href);
+            }
+        } catch (e) {
+            console.error("OG:URL ayarlama hatası:", e);
+        }
+    });
+
+    const characters = [ 
+      "Şeytanın Avukatı", "Gaip", "Tutukluluğa İtirazı Kabul Olan Müdafi", "Kanun Koyucu", "Themis",
+      "Asli Kurucu İktidar", "Evlenen", "Güveni Kötüye Kullanılan", "Avukato", "Kader Mahkumu",
+      "Her Şeye İtiraz Eden", "Eser", "Bilirkişi", "Süre Stresi Yaşayan", "Nafaka Alan",
+      "Nafaka Ödeyen", "Persona Non Grata", "Kumar Oynanması İçin Yer ve İmkan Sağlayan",
+      "Tutuklu (Sevdiğine Karşı)", "Aşırı İyi Niyetli Üçüncü Kişi", "Akraba İşi Almak Zorunda Kalan",
+      "Adliye Muhtarı", "Haksız Rekabet Oluşturan", "Sürekli Yargıtay Kararı Paylaşan", "Aldatılan",
+      "Her Şeye Tutanak Tutan", "Elif Eylül", "Darbe Yapan (Kalplere)", "Dosyayı Kişiselleştiren",
+      "Aşırı Yararlanılan (Kendisinden)", "Terk Edilen", "Ağır Ceza Mahkemesi Başkanı",
+      "Memurlarla Kavgalı Olan", "Alacaklı (Hayattan)", "Adli Tatil Sevdalısı", "Sebedsiz Zenginleşen",
+      "Dilekçesinde Şiir Kullanan", "Basiretli Tacir", "Harvey Specter", "Siyasi Parti Kuran",
+      "Çekişmeli Boşanma Seven", "Affeden Taraf", "Alkol veya Uyuşturucu Madde Etkisinde Olan Taraf",
+      "Yargıtay Cumhuriyet Başsavcısı", "Tam Ehliyetsiz (sevince)", "Donatan", "Özel Hukuk Güzel Kişisi",
+      "Saul Goodman", "Nişanlanan", "Dilekçelerini Son Güne Bırakan", "Adli Tatilde Daha Yoğun Çalışan",
+      "Cumhurbaşkanı", "Bedel Ödeyen", "Alkol Bağımlılığı Sebebiyle Kısıtlanan"
+    ];
+
+    const resultEl = document.getElementById('result');
+    const playButtonEl = document.getElementById('playButton');
+    const shareBtn = document.getElementById('shareBtn');
+
+    let clickSound, revealSound, scrollSound;
+    try {
+        clickSound = new Audio('https://freesound.org/data/previews/256/256113_3263906-lq.mp3');
+        revealSound = new Audio('https://freesound.org/data/previews/270/270333_5122100-lq.mp3'); 
+        scrollSound = new Audio('https://freesound.org/data/previews/146/146725_2615117-lq.mp3');
+        if(scrollSound) scrollSound.volume = 0.3;
+    } catch (e) {
+        console.warn("Ses dosyaları yüklenirken hata (oyun devam edecek):", e);
+        const dummySound = { play: () => Promise.resolve(), volume: 0.3, currentTime: 0 };
+        clickSound = clickSound || dummySound;
+        revealSound = revealSound || dummySound;
+        scrollSound = scrollSound || dummySound;
+    }
+
+    let intervalId;
+    let displayOrderCharacters = []; 
+    let currentDisplayIndex = 0; 
+
+    function playGame() {
+      clickSound.play().catch(e => console.warn("Click sesi çalınamadı:", e));
+
+      shareBtn.classList.remove('visible'); 
+      resultEl.classList.remove('revealed'); 
+      resultEl.style.opacity = '0'; 
+      resultEl.style.boxShadow = 'none'; 
+      
+      resultEl.textContent = "?";
+      resultEl.classList.add('flickering'); 
+      
+      if(playButtonEl) {
+          playButtonEl.disabled = true;
+          playButtonEl.style.display = 'none'; 
+      }
+
+      if (intervalId) {
+          clearInterval(intervalId);
+      }
+
+      displayOrderCharacters = [...characters].sort(() => 0.5 - Math.random());
+      currentDisplayIndex = 0;
+
+      intervalId = setInterval(() => {
+        if (displayOrderCharacters.length > 0) {
+            resultEl.textContent = displayOrderCharacters[currentDisplayIndex];
+            currentDisplayIndex = (currentDisplayIndex + 1) % displayOrderCharacters.length; 
+        }
+        scrollSound.currentTime = 0;
+        scrollSound.play().catch(e => console.warn("Scroll sesi çalınamadı:", e));
+      }, 75); 
+
+      setTimeout(() => {
+        clearInterval(intervalId);
+        resultEl.classList.remove('flickering');
+
+        const finalCharacter = characters[Math.floor(Math.random() * characters.length)]; 
+        resultEl.textContent = finalCharacter;
+        resultEl.classList.add('revealed'); 
+        
+        revealSound.play().catch(e => console.warn("Reveal sesi çalınamadı:", e));
+
+        shareBtn.classList.add('visible'); 
+        shareBtn.dataset.character = finalCharacter;
+        if(playButtonEl) {
+            playButtonEl.textContent = "TEKRAR OYNA? 🔄"; 
+            playButtonEl.disabled = false;
+            playButtonEl.style.display = 'block'; 
+        }
+      }, 2200); 
+    }
+
+    function shareResult() {
+      const character = shareBtn.dataset.character;
+      openTwitterIntent(character); 
+    }
+
+    function openTwitterIntent(character) {
+        if (!character) character = "bilinmeyen_karakter"; 
+        const text = encodeURIComponent(`Paralel evrende ben bir "${character}" oldum! Sen kimsin? 🤯 #ParalelHukukEvreni`);
+        const url = encodeURIComponent(window.location.href);
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+        window.open(twitterUrl, '_blank');
+    }
+  </script>
+</body>
+</html>
