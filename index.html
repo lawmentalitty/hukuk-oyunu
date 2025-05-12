@@ -6,7 +6,8 @@
   
   <meta property="og:title" content="Paralel Evrende Hangi Hukuk Karakterisin?">
   <meta property="og:description" content="Hukuk karakterlerinden hangisi olduğunu keşfetmek için bu eğlenceli testi çöz ve sonucunu paylaş!">
-  <meta property="og:image" content="https://via.placeholder.com/1200x630/000000/00FF00?text=Paralel+Evren+Hukuk+Oyunu"> <meta property="og:url" content=""> 
+  <meta property="og:image" content="https://via.placeholder.com/1200x630/000000/00FF00?text=Paralel+Evren+Hukuk+Oyunu">
+  <meta property="og:url" content=""> 
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
 
@@ -49,27 +50,23 @@
      }
      #result {
        font-size: clamp(32px, 8vw, 50px); 
-       min-height: 50px; 
-       margin-bottom: 5px; 
+       /* YENİ: Sabit yükseklik ve dikey hizalama */
+       height: 120px; /* Ortalama iki satır uzun metin için yeterli olabilir, test edin. */
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       /* min-height: 50px; Eski min-height kaldırıldı */
+       margin-top: 15px; 
+       margin-bottom: 15px; 
        font-weight: bold;
        color: #39FF14;
        opacity: 0; 
        padding: 10px; 
        transition: box-shadow 0.3s ease-out; 
+       overflow: hidden; /* Çok nadir de olsa taşmaları engellemek için */
+       text-align: center; /* Metin zaten ortalı ama yine de bulunsun */
      }
-     #characterDescription {
-        font-size: clamp(15px, 3.8vw, 18px);
-        color: #00dd00; 
-        margin-top: 5px; 
-        margin-bottom: 15px; 
-        line-height: 1.5;
-        max-width: 90%; 
-        opacity: 0; 
-        transition: opacity 0.5s ease-in-out;
-     }
-     #characterDescription.visible {
-        opacity: 1;
-     }
+     /* Karakter açıklaması stilleri kaldırıldı */
      #result.flickering { 
        opacity: 1; 
        animation: flickerAnimation 0.2s infinite;
@@ -161,8 +158,8 @@
      }
      @media (min-width: 768px) {
        h1 { font-size: 40px; letter-spacing: 0.1em;}
-       #result { font-size: 50px; } 
-       #characterDescription { font-size: 18px; }
+       #result { font-size: 50px; height: 150px; } /* Mobil için 120px, desktop için 150px gibi */
+       /* Karakter açıklaması media query stilleri kaldırıldı */
        button { font-size: 20px; padding: 12px 32px; } 
        .creator-credit { font-size: 14px; }
        #playCounter { font-size: 16px; }
@@ -173,7 +170,6 @@
   <h1>Paralel Evrende<br>Hangi Hukuk Karakterisin?</h1>
   <hr class="separator"> 
   <div id="result">?</div>
-  <div id="characterDescription"></div>
   <hr class="separator"> 
   
   <button id="playButton" onclick="playGame()">OYNA</button>
@@ -195,75 +191,37 @@
             console.error("OG:URL ayarlama hatası:", e);
         }
         fetchAndShowPlayCount(true); 
-        if (characterDescriptionEl) { // characterDescriptionEl tanımlı mı diye kontrol et
-            characterDescriptionEl.style.display = 'none';
-            characterDescriptionEl.classList.remove('visible');
-        }
+        // Karakter açıklamasıyla ilgili DOMContentLoaded içindeki kod kaldırıldı
     });
 
+    // --- Oyun Karakterleri (Sadece İsimler) ---
     const characters = [ 
-       { name: "Şeytanın Avukatı", description: "Her tartışmada karşı tarafın avukatıdır, bazen kendi gölgesine bile dava açar." },
-       { name: "Gaip", description: "Kim olduğunu kendi bile hatırlamıyor, sürekli kendini arıyor; ama tebligattan kaçmakta üstüne yoktur." },
-       { name: "Tutukluluğa İtirazı Kabul Olan Müdafi", description: "Kariyerinin zirvesini bu anla yaşadı, her sohbetin konusu aynıdır: \"O duruşmayı görmeliydiniz!\"" },
-       { name: "Kanun Koyucu", description: "Sabah kalkar, canı sıkılır, yeni bir kanun çıkarır; akşam da \"E bu neydi şimdi?\" diye şaşırır." },
-       { name: "Themis", description: "Adaleti o kadar seviyor ki gözü bağlı dolaşırken ara sıra takılıp düşer, terazisiyle de denge sağlamaya çalışır." },
-       { name: "Asli Kurucu İktidar", description: "Gerçekliğin kurallarını o belirler; yer çekimini bile \"Anayasaya aykırı!\" diye tartışmaya açabilir." },
-       { name: "Evlenen", description: "Mutluluğu Medeni Kanun'da buldu, sürekli nikah tazeleme peşinde, her evlilik sözleşmesine kendi adını yazar." },
-       { name: "Güveni Kötüye Kullanılan", description: "Herkese sonuna kadar güvenir, sonra \"Yine mi ben?\" diye etrafa bakar ve yeni bir 'güveni kötüye kullanma' vakası başlatır." },
-       { name: "Avukato", description: "Cübbesiyle doğmuş, her kelimesi itirazla başlar; kahve sipariş ederken bile \"Mevcut duruma şerhim var!\" der." },
-       { name: "Kader Mahkumu", description: "Her hatanın tek bir sorumlusu vardır: Kadere İnfaz Dairesi; o sadece evrenin ona biçtiği rolü oynar." },
-       { name: "Her Şeye İtiraz Eden", description: "Nefes alışınıza bile itiraz edebilir, sessiz kalmak onun için imkansızdır; \"Ama...\" diye başlayan cümleleri bitmez." },
-       { name: "Eser", description: "Her anı, her düşüncesi tescilli bir eserdir, telif hakkı talep etmeye hazır; sabah kahvaltısını bile 'sanatsal bir performans' olarak sunar." },
-       { name: "Bilirkişi", description: "Her konuda 'ufak bir fikri' vardır, genellikle bu 'ufak fikir' davayı çözmez; ama raporu 50 sayfadan az olmaz." },
-       { name: "Süre Stresi Yaşayan", description: "Takvim onun için düşmandır, sürekli \"Son gün mü ne?\" diye panikler; hayatı bir 'süresiz itiraz süresi' gibidir." },
-       { name: "Nafaka Alan", description: "Hayatın ona bir borcu vardı, tahsilatı düzenli olarak yapar; en sevdiği ay, nafaka ödemesinin yattığı aydır." },
-       { name: "Nafaka Ödeyen", description: "Cüzdanı sürekli nafaka davasına maruz kalmış gibi boş ve üzgündür; \"Keşke nafaka borcu da zamanaşımına uğrasa\" diye iç çeker." },
-       { name: "Persona Non Grata", description: "Davetli bile olsa kapıda \"İsminiz listede yok\" denir; kendi evine girmek için bile davetiye bekler." },
-       { name: "Kumar Oynanması İçin Yer ve İmkan Sağlayan", description: "Hayatındaki her karar, başkası için büyük bir kumardır; o sadece masayı kurar ve \"Risk almak lazım!\" diye fısıldar." },
-       { name: "Tutuklu (Sevdiğine Karşı)", description: "Aşkın hücrelerine tıkılmış, tahliye talebi reddedilmiş bir gönül mahkumudur; kelepçesi kalbindedir." },
-       { name: "Aşırı İyi Niyetli Üçüncü Kişi", description: "Her olaya iyi niyetle dalar, ortalık karıştığında \"Ama ben yardım ediyordum!\" diye savunma yapar; sonuç genellikle daha büyük bir karmaşadır." },
-       { name: "Akraba İşi Almak Zorunda Kalan", description: "Aile içi davalardan başını kaldıramaz; bayram ziyaretleri onun için gizli iş görüşmelerine dönüşür." },
-       { name: "Adliye Muhtarı", description: "Adliyenin dedikodu merkezidir, kimin ne zaman nerede olacağını önceden bilir; çaycıdan zabıt katibine herkesle ahbaptır." },
-       { name: "Haksız Rekabet Oluşturan", description: "Oyunlarda bile kural tanımadan kazanır, \"Amaç sonuçtur\" felsefesiyle yaşar; rakibinin klavyesine kahve dökmek mübahtır." },
-       { name: "Sürekli Yargıtay Kararı Paylaşan", description: "Sosyal medyası Yargıtay bülteni gibidir, hayatındaki her olaya uygun bir içtihat bulur; kahve falına bile Yargıtay kararıyla bakar." },
-       { name: "Aldatılan", description: "Hayatın acı gerçekleriyle her seferinde yeniden tanışır, \"Bunu beklemiyordum!\" favori cümlesidir; ama yine de saf kalmaya devam eder." },
-       { name: "Her Şeye Tutanak Tutan", description: "Çay içerken bile 'çay içme tutanağı' tutar; hayatı baştan sona resmi belgedir, kişisel günlüğü bile 'Gizli Tutanak' başlığıyla başlar." },
-       { name: "Elif Eylül", description: "Paralel evrenin hukuk fakültesinde efsane olmuş bir karakterdir, adı her derste anılır ama kimse yüzünü görmemiştir; belki de bir dava dosyasına saklanmıştır." },
-       { name: "Darbe Yapan (Kalplere)", description: "Duygu darbesi uzmanıdır, kalpleri fethettikten sonra olağanüstü hal ilan eder; sonra da hiçbir hukuki sorumluluk kabul etmez." },
-       { name: "Dosyayı Kişiselleştiren", description: "Her dava onun için kişisel bir meseledir, dosya içine düşman listesi ekler; mahkemede 'Bu dava benim için şereftir!' diye bağırır." },
-       { name: "Aşırı Yararlanılan (Kendisinden)", description: "Kullanım süresi dolmuş bir eşya gibidir, herkes ondan bir şeyler alır; bedava avukatlık yapmak kaderidir." },
-       { name: "Terk Edilen", description: "Davacı bile onu duruşmada yalnız bırakır, \"Neredesiniz?\" diye sürekli etrafa bakar; en sadık dostu dava dosyasıdır." },
-       { name: "Ağır Ceza Mahkemesi Başkanı", description: "Kahvaltıda yumurtayı kırarken bile 'suçun vasıf ve mahiyetini' düşünür; marketteki sırayı bozana anında 'ağır ceza' verir." },
-       { name: "Memurlarla Kavgalı Olan", description: "Adliyedeki memurlarla günlük rutini 'iyi günler' yerine 'itirazım var!' diye başlar; fotokopi makinesinin arızası bile şahsi bir saldırıdır." },
-       { name: "Alacaklı (Hayattan)", description: "Hayat ona borçluymuş gibi davranır, tebligatla mutluluk bekler; alacağını tahsil edemezse 'icra takibi' başlatmayı düşünür." },
-       { name: "Adli Tatil Sevdalısı", description: "Tüm yılı Adli Tatil'e endeksler, takvimindeki tek önemli tarih 20 Temmuz'dur; rüyasında bile tebligat gelmediğini görür." },
-       { name: "Sebepsiz Zenginleşen", description: "Piyango bileti almaz ama sürekli para bulur; hayat ona karşı sebepsizce bonkör, yolda yürürken altın bulur." },
-       { name: "Dilekçesinde Şiir Kullanan", description: "Hukuk dilini şiirle harmanlar, hakime 'Ey Adil Sultanım' diye dilekçe sunar; kararı beklerken muradiye okur." },
-       { name: "Basiretli Tacir", description: "Ticari risk almaktan o kadar korkar ki, parayı yastık altında bile kasa içinde saklar; kredi kartı kullanırken bile 40 kere düşünür." },
-       { name: "Harvey Specter", description: "Her adımı jilet keskinliğinde, her konuşması 'duruma özel ayrıcalık' içerir; ama bazen fotokopi makinesini bile çalıştıramaz, çünkü o işler 'Donna'ya aittir." },
-       { name: "Siyasi Parti Kuran", description: "Mahalledeki kedi sahipleri için bile siyasi parti kurar, tüzüğü 3 sayfadır; tek üyesi kendisidir." },
-       { name: "Çekişmeli Boşanma Seven", description: "Mutluluğu sadece çekişmeli boşanma davalarındaki gerilimde bulur; kendi evinde bile \"Seninle bu evliliğin dava şartı yok!\" diye tartışma çıkarır." },
-       { name: "Affeden Taraf", description: "Tüm borçları, tüm haksızlıkları affeder; hayatı 'ibra edilmiş alacaklar' listesidir, bu yüzden genellikle parasızdır." },
-       { name: "Alkol veya Uyuşturucu Madde Etkisinde Olan Taraf", description: "Sürekli hukuki işlem ehliyeti tartışmalıdır; hayatı 'Geçici Ehliyetsizlik Raporu' ile geçer, en net kararlarını bu halde alır." },
-       { name: "Yargıtay Cumhuriyet Başsavcısı", description: "Hayatındaki her 'hükmü' bozar, 'Yerindelik denetimi yapamam!' diye bağırarak dolaşır; market fişlerini bile bozarak inceler." },
-       { name: "Tam Ehliyetsiz (sevince)", description: "Aşık olunca notlarını kaybeder, adını unutur, hukuki işlem yapma ehliyetini tamamen yitirir; aşkından dava açsa, davasını bile takip edemez." },
-       { name: "Donatan", description: "Evdeki plastik ördeği bile 'donatan sıfatıyla' yüzdürür; tüm eşyaları için gemi sicili ister, koltuğu bile demirbaş değil, gemi sayar." },
-       { name: "Özel Hukuk Güzel Kişisi", description: "Hukukun en estetik alanında kendini bulur, her sözleşmeyi imza atmadan önce 'ışığına' bakar; Ticaret Hukuku onun için bir podyumdur." },
-       { name: "Saul Goodman", description: "Kartvizitleri her yerde çıkar, hukuki boşlukları mikroskopla arar; \"Better Call...\" diye başlayan cümleleri hayat felsefesidir." },
-       { name: "Nişanlanan", description: "Hukukun her alanıyla nişanlanır, ama evliliğe bir türlü karar veremez; 'aile hukuku' ile ilişkisi sürekli bir 'nişanlılık dönemi' gibidir." },
-       { name: "Dilekçelerini Son Güne Bırakan", description: "Adrenalin bağımlısıdır, en yaratıcı fikirleri son 5 dakikada gelir; postaneye koşarken hayatının filmini çeker." },
-       { name: "Adli Tatilde Daha Yoğun Çalışan", description: "Herkes tatil yaparken o ofiste nöbet tutar, \"Esas işler tatilde çıkar!\" mottosuyla yaşar; bronzlaşmak yerine dosya sarar." },
-       { name: "Cumhurbaşkanı", description: "Evdeki terlik dağılımını bile 'Cumhurbaşkanlığı Kararnamesi' ile düzenler; çayı şekersiz içmeye 'Ulusal Birlik Çağrısı' adını verir." },
-       { name: "Bedel Ödeyen", description: "Hayatın faturasını sürekli ona keser, yaptığı hiçbir şey yanına kar kalmaz; otobüste bile 'zararın tazmini' için yer arar." },
-       { name: "Alkol Bağımlılığı Sebebiyle Kısıtlanan", description: "Her yanlış kararını 'kısıtlılık halime verin' diye açıklar; hayatı 'vesayet altında' geçer, vasi olarak cüzdanını tayin etmiştir." }
+       "Şeytanın Avukatı", "Gaip", "Tutukluluğa İtirazı Kabul Olan Müdafi", "Kanun Koyucu", "Themis",
+       "Asli Kurucu İktidar", "Evlenen", "Güveni Kötüye Kullanılan", "Avukato",
+       "Kader Mahkumu",
+       "Her Şeye İtiraz Eden", "Eser", "Bilirkişi", "Süre Stresi Yaşayan", "Nafaka Alan",
+       "Nafaka Ödeyen", "Persona Non Grata", "Kumar Oynanması İçin Yer ve İmkan Sağlayan",
+       "Tutuklu (Sevdiğine Karşı)", "Aşırı İyi Niyetli Üçüncü Kişi", "Akraba İşi Almak Zorunda Kalan",
+       "Adliye Muhtarı", "Haksız Rekabet Oluşturan", "Sürekli Yargıtay Kararı Paylaşan", "Aldatılan",
+       "Her Şeye Tutanak Tutan", "Elif Eylül", 
+       "Darbe Yapan (Kalplere)", "Dosyayı Kişiselleştiren",
+       "Aşırı Yararlanılan (Kendisinden)", "Terk Edilen", "Ağır Ceza Mahkemesi Başkanı",
+       "Memurlarla Kavgalı Olan", "Alacaklı (Hayattan)", "Adli Tatil Sevdalısı", "Sebepsiz Zenginleşen",
+       "Dilekçesinde Şiir Kullanan", "Basiretli Tacir", "Harvey Specter", "Siyasi Parti Kuran",
+       "Çekişmeli Boşanma Seven", "Affeden Taraf", "Alkol veya Uyuşturucu Madde Etkisinde Olan Taraf",
+       "Yargıtay Cumhuriyet Başsavcısı", "Tam Ehliyetsiz (sevince)", "Donatan", "Özel Hukuk Güzel Kişisi", 
+       "Saul Goodman", "Nişanlanan", "Dilekçelerini Son Güne Bırakan", "Adli Tatilde Daha Yoğun Çalışan",
+       "Cumhurbaşkanı", "Bedel Ödeyen", "Alkol Bağımlılığı Sebebiyle Kısıtlanan"
     ];
 
+    // --- HTML Elementleri ---
     const resultEl = document.getElementById('result');
-    const characterDescriptionEl = document.getElementById('characterDescription'); 
+    // const characterDescriptionEl = document.getElementById('characterDescription'); // KALDIRILDI
     const playButtonEl = document.getElementById('playButton');
     const shareBtn = document.getElementById('shareBtn');
     const playCounterEl = document.getElementById('playCounter'); 
 
+    // --- Animasyon Sesi ---
     let gameAnimationSound;
     const gameAnimationDuration = 2200; 
 
@@ -277,10 +235,12 @@
         gameAnimationSound = { play: () => Promise.resolve(), pause: () => {}, load: () => {}, currentTime: 0 }; 
     }
 
+    // --- Oyun Değişkenleri ---
     let intervalId;
     let displayOrderCharacters = []; 
     let currentDisplayIndex = 0; 
 
+    // --- Sayaç Fonksiyonları ---
     function positionCounter(afterPlayButton) {
         if (playCounterEl && playButtonEl && shareBtn) {
             if (afterPlayButton) {
@@ -333,6 +293,7 @@
       }
     }
 
+    // --- Ana Oyun Fonksiyonu ---
     async function playGame() { 
       if (gameAnimationSound && typeof gameAnimationSound.play === 'function') {
         gameAnimationSound.currentTime = 0; 
@@ -347,12 +308,12 @@
       
       positionCounter(true); 
 
-      if (characterDescriptionEl) { // Önce tanımlı mı diye kontrol et
-        characterDescriptionEl.style.display = 'none'; 
-        characterDescriptionEl.classList.remove('visible'); 
-        characterDescriptionEl.textContent = ''; 
-      }
-
+      // Karakter açıklamasıyla ilgili kodlar kaldırıldı
+      // if (characterDescriptionEl) { 
+      //   characterDescriptionEl.style.display = 'none'; 
+      //   characterDescriptionEl.classList.remove('visible'); 
+      //   characterDescriptionEl.textContent = ''; 
+      // }
 
       shareBtn.classList.remove('visible'); 
       resultEl.classList.remove('revealed'); 
@@ -371,12 +332,13 @@
           clearInterval(intervalId);
       }
 
-      displayOrderCharacters = [...characters]; 
+      displayOrderCharacters = [...characters]; // Artık sadece string dizisi olduğu için .name'e gerek yok
       currentDisplayIndex = 0;
 
       intervalId = setInterval(() => {
           if (displayOrderCharacters.length > 0) {
-              resultEl.textContent = displayOrderCharacters[currentDisplayIndex % displayOrderCharacters.length].name; 
+              // Animasyon sırasında sadece isimleri göster (doğrudan string)
+              resultEl.textContent = displayOrderCharacters[currentDisplayIndex % displayOrderCharacters.length]; 
               currentDisplayIndex++; 
           }
       }, 75); 
@@ -389,21 +351,23 @@
 
           resultEl.classList.remove('flickering');
 
+          // Rastgele bir karakter seç (artık bir string)
           const finalCharacter = characters[Math.floor(Math.random() * characters.length)]; 
           
-          resultEl.textContent = finalCharacter.name; 
+          resultEl.textContent = finalCharacter; // İsmi göster
           resultEl.classList.add('revealed');
           
-          if (characterDescriptionEl) { // Önce tanımlı mı diye kontrol et
-            characterDescriptionEl.textContent = finalCharacter.description;
-            characterDescriptionEl.style.display = 'block'; 
-            setTimeout(() => {
-                characterDescriptionEl.classList.add('visible');
-            }, 50); 
-          }
+          // Karakter açıklamasıyla ilgili kodlar kaldırıldı
+          // if (characterDescriptionEl) { 
+          //   characterDescriptionEl.textContent = finalCharacter.description; // .description yok artık
+          //   characterDescriptionEl.style.display = 'block'; 
+          //   setTimeout(() => {
+          //       characterDescriptionEl.classList.add('visible');
+          //   }, 50); 
+          // }
            
           shareBtn.classList.add('visible'); 
-          shareBtn.dataset.character = finalCharacter.name; 
+          shareBtn.dataset.character = finalCharacter; // Paylaşım için ismi kullan (doğrudan string)
           if(playButtonEl) {
               playButtonEl.textContent = "TEKRAR OYNA? 🔄"; 
               playButtonEl.disabled = false;
@@ -413,6 +377,7 @@
       }, gameAnimationDuration); 
     }
 
+    // --- Paylaşım Fonksiyonları ---
     function shareResult() {
       const character = shareBtn.dataset.character;
       openTwitterIntent(character); 
