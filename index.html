@@ -214,16 +214,21 @@
 
     // --- Animasyon Sesi ---
     let gameAnimationSound;
-    const gameAnimationDuration = 2200; // milisaniye, setTimeout ile eşleşmeli
+    const gameAnimationDuration = 2200; 
 
     try {
         // LÜTFEN 'audio/animasyon_sesi.mp3' KISMINI KENDİ DOSYA ADINIZLA DEĞİŞTİRİN!
         gameAnimationSound = new Audio('audio/animasyon_sesi.mp3'); 
         gameAnimationSound.preload = "auto";
+        gameAnimationSound.load(); // Sesi aktif olarak yüklemeye başla
     } catch (e) {
         console.warn("Oyun animasyon sesi yüklenirken hata:", e);
-        // Hata durumunda ses çalmayacak sahte bir obje oluştur
-        gameAnimationSound = { play: () => Promise.resolve(), pause: () => {}, currentTime: 0 }; 
+        gameAnimationSound = { 
+            play: () => Promise.resolve(), 
+            pause: () => {}, 
+            load: () => {}, 
+            currentTime: 0 
+        }; 
     }
 
     // --- Oyun Değişkenleri ---
@@ -286,9 +291,8 @@
 
     // --- Ana Oyun Fonksiyonu (Animasyon Sesi Entegre Edilmiş) ---
     async function playGame() { 
-      // Animasyon sesini başlat
       if (gameAnimationSound && typeof gameAnimationSound.play === 'function') {
-        gameAnimationSound.currentTime = 0; // Her seferinde başa sar
+        gameAnimationSound.currentTime = 0; 
         gameAnimationSound.play().catch(e => console.warn("Animasyon sesi çalınamadı:", e));
       }
 
@@ -320,7 +324,6 @@
       displayOrderCharacters = [...characters].sort(() => 0.5 - Math.random());
       currentDisplayIndex = 0;
 
-      // Karakter değiştirme animasyonu (ses ÇIKARILDI)
       intervalId = setInterval(() => {
           if (displayOrderCharacters.length > 0) {
               resultEl.textContent = displayOrderCharacters[currentDisplayIndex];
@@ -330,7 +333,6 @@
 
       setTimeout(() => {
           clearInterval(intervalId);
-          // Animasyon sesini durdur
           if (gameAnimationSound && typeof gameAnimationSound.pause === 'function') {
             gameAnimationSound.pause();
           }
@@ -341,9 +343,6 @@
           resultEl.textContent = finalCharacter;
           resultEl.classList.add('revealed'); 
            
-          // İsterseniz burada ayrı bir "sonuç gösterme" sesi çalabilirsiniz.
-          // Örnek: revealSound.play().catch(e => console.warn("Sonuç sesi çalınamadı:", e));
-
           shareBtn.classList.add('visible'); 
           shareBtn.dataset.character = finalCharacter;
           if(playButtonEl) {
@@ -352,7 +351,7 @@
               playButtonEl.style.display = 'block'; 
           }
           positionCounter(false); 
-      }, gameAnimationDuration); // Sabit süre yerine gameAnimationDuration değişkenini kullandık
+      }, gameAnimationDuration); 
     }
 
     // --- Paylaşım Fonksiyonları ---
